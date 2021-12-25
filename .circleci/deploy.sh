@@ -24,7 +24,7 @@ container_definition="[
 
 task_definition=$(aws ecs register-task-definition \
 --container-definitions "$container_definition" \
---family test \
+--family "$name" \
 --execution-role-arn "arn:aws:iam::$AWS_ACCOUNT_ID:role/ecsTaskExecutionRole" \
 --task-role-arn "arn:aws:iam::$AWS_ACCOUNT_ID:role/ecsTaskExecutionRole" \
 --network-mode "awsvpc" \
@@ -35,8 +35,8 @@ task_definition=$(aws ecs register-task-definition \
 echo &task_definition
 
 if [[ $(aws ecs update-service \
- --clustere test \
- --service test \
+ --clustere "$name" \
+ --service "$name" \
  --task-definition "$task_definition" | $JQ ".service.taskDefinition") != "$task_definition" ]];
  then
  echo "ERROR: Updating Service is Fail";
@@ -47,8 +47,8 @@ fi
 
 
 for attempt in {1..30}; do
-  if stale=$(aws ecs describe-services --cluster "$CLUSTER_NAME" --services "$SERVICE_NAME" | \
-                 $JQ ".services[0].deployments | .[] | select(.taskDefinition != \"$revision\") | .taskDefinition"); then
+  if stale=$(aws ecs describe-services --cluster "$name" --services "$name" | \
+                 $JQ ".services[0].deployments | .[] | select(.taskDefinition != \"$task_definition\") | .taskDefinition"); then
     echo "Waiting for stale deployment(s):"
     echo "$stale"
       sleep 30
