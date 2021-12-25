@@ -3,16 +3,13 @@ name="test"
 aws --version
 aws configure set default.aws_access_key_id "$AWS_ACCESS_KEY_ID"
 aws configure set default.aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-aws configure set default.region "$AWS_DEFAULT_REGION"
+aws configure set default.region ap-northeast-2
 aws configure set default.output json
 
 container_definition="[
   {
     \"name\": \"$name\",
     \"image\": \"$REPOSITORY_URL\",
-    \"repositoryCredentials\": {
-      \"credentialsParameter\": \"$REPOSITORY_CREDENTIAL\"
-    },
     \"portMappings\": [
       {
         \"containerPort\": 8080,
