@@ -18,7 +18,7 @@ jobs:
       - run :
           name: Build Docker Image and Push to Docker hub
           command: /
-            docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker build -t hooo0503/test:latest
             docker push hooo0503/test:latest
   deploy:
