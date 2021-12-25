@@ -1,4 +1,5 @@
 name="test"
+JQ="jq --raw-output --exit-status"
 
 aws --version
 aws configure set default.aws_access_key_id "$AWS_ACCESS_KEY_ID"
@@ -29,6 +30,32 @@ task_definition=$(aws ecs register-task-definition \
 --network-mode "awsvpc" \
 --requires-compatibilities "FARGATE" \
 --cpu "$AWS_ECS_CONTAINER_CPU" \
---memory "$AWS_ECS_CONTAINER_MEMORY")
+--memory "$AWS_ECS_CONTAINER_MEMORY" | $JQ ".taskDefinition.taskDefinitionArn")
 
-echo 
+echo &task_definition
+
+if [[ $(aws ecs update-service \
+ --clustere test \
+ --service test \
+ --task-definition "$task_definition" | $JQ ".service.taskDefinition") != "$task_definition" ]];
+ then
+ echo "ERROR: Updating Service is Fail";
+ return 1
+else
+  echo "Success Updating Service";
+fi
+
+
+for attempt in {1..30}; do
+  if stale=$(aws ecs describe-services --cluster "$CLUSTER_NAME" --services "$SERVICE_NAME" | \
+                 $JQ ".services[0].deployments | .[] | select(.taskDefinition != \"$revision\") | .taskDefinition"); then
+    echo "Waiting for stale deployment(s):"
+    echo "$stale"
+      sleep 30
+  else
+    echo "Deployed!"
+    return 0
+  fi
+done
+echo "Service update took too long - please check the status of the deployment on the AWS ECS console"
+return 0
