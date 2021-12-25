@@ -35,7 +35,7 @@ task_definition=$(aws ecs register-task-definition \
 echo &task_definition
 
 if [[ $(aws ecs update-service \
- --clustere "$name" \
+ --cluster "$name" \
  --service "$name" \
  --task-definition "$task_definition" | $JQ ".service.taskDefinition") != "$task_definition" ]];
  then
