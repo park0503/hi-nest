@@ -42,7 +42,6 @@ if [[ $(aws ecs update-service \
  --task-definition "$task_definition" | $JQ ".service.taskDefinition") != "$task_definition" ]];
  then
  echo "ERROR: Updating Service is Fail";
- return 1
 else
   echo "Success Updating Service";
 fi
@@ -56,6 +55,5 @@ for attempt in {1..30}; do
       sleep 30
   else
     echo "Deployed!"
-    return 0
   fi
 done
