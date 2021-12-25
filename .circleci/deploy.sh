@@ -11,6 +11,9 @@ container_definition="[
   {
     \"name\": \"$name\",
     \"image\": \"$REPOSITORY_URL\",
+    \"repositoryCredentials\": {
+      \"credentialsParameter\":\"$REPOSITORY_CREDENTIAL\"
+    },
     \"portMappings\": [
       {
         \"containerPort\": 3000,
@@ -32,7 +35,7 @@ task_definition=$(aws ecs register-task-definition \
 --cpu "$AWS_ECS_CONTAINER_CPU" \
 --memory "$AWS_ECS_CONTAINER_MEMORY" | $JQ ".taskDefinition.taskDefinitionArn")
 
-echo &task_definition
+echo "$task_definition"
 
 if [[ $(aws ecs update-service \
  --cluster "$name" \
