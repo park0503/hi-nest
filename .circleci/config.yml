@@ -17,7 +17,7 @@ jobs:
           version: 20.10.11
       - run :
           name: Build Docker Image and Push to Docker hub
-          command: /
+          command: |
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker build -t hooo0503/test:latest
             docker push hooo0503/test:latest
