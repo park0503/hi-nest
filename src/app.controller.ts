@@ -4,6 +4,6 @@ import { Controller, Get } from '@nestjs/common';
 export class AppController {
   @Get()
   home() {
-    return { connection: "success - auto" };
+    return { connection: "success - auto2" };
   }
 }
