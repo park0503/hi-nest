@@ -37,13 +37,13 @@ workflows:
   automatic_deploy: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - build_and_push:
-          filters:
-            branches:
-              only: main
+      #- build_and_push:
+      #    filters:
+      #      branches:
+      #        only: circle
       - deploy:
           filters:
             branches:
-              only: main
-          requires:
-              - build_and_push
+              only: circle
+        #  requires:
+        #      - build_and_push
